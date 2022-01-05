@@ -6,7 +6,8 @@ using BenchmarkDotNet.Attributes;
 
 namespace uwu.Benchmarks.Stuff
 {
-	public class DictionaryBench
+	[MemoryDiagnoser]
+	public class DictionaryBenchmark
 	{
 		#region Fields
 

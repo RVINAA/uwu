@@ -10,7 +10,7 @@ namespace uwu.Benchmarks
 	{
 		public static void Main()
 		{
-			BenchmarkRunner.Run<DictionaryBench>();
+			BenchmarkRunner.Run<DictionaryBenchmark>();
 			Console.ReadKey();
 		}
 	}
