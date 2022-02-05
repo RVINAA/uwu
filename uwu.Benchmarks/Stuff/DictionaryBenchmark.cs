@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Jil;
 using Newtonsoft.Json;
@@ -9,16 +10,21 @@ namespace uwu.Benchmarks.Stuff
 	[MemoryDiagnoser]
 	public class DictionaryBenchmark
 	{
+#pragma warning disable CA1822
+#if true
+
+		#region IDictionary<string, string> stuff
+
 		#region Fields
 
-		private static readonly IDictionary<string, string> _dictionary = new Dictionary<string, string>()
+		private static readonly IDictionary<string, string> _dictionaryStr = new Dictionary<string, string>()
 		{
 			{ "Dummy Key", "Dummy Value" },
 			{ "Key", "Value" },
 			{ "K", "V" }
 		};
 
-		private static readonly IDictionary<string, string> _dictionaryOne = new Dictionary<string, string>()
+		private static readonly IDictionary<string, string> _dictionaryStrOne = new Dictionary<string, string>()
 		{
 			{ "01", "Hiya, Barbie\n" },
 			{ "02", "Hi, Ken\n" },
@@ -44,7 +50,7 @@ namespace uwu.Benchmarks.Stuff
 			{ "23", "Kiss me here, touch me there, hanky panky\n" }
 		};
 
-		private static readonly IDictionary<string, string> _dictionaryTwo = new Dictionary<string, string>()
+		private static readonly IDictionary<string, string> _dictionaryStrTwo = new Dictionary<string, string>()
 		{
 			{ "01", "Hiya, Barbie\n" },
 			{ "02", "H\fi, Ken\n" },
@@ -95,39 +101,116 @@ namespace uwu.Benchmarks.Stuff
 		#endregion
 
 		[Benchmark]
-		public string SerializeDictionary_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_dictionary);
+		public string SerializeDictionaryStr_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_dictionaryStr);
 
 		[Benchmark]
-		public string SerializeDictionary_Newtonsoft() => JsonConvert.SerializeObject(_dictionary);
+		public string SerializeDictionaryStr_Newtonsoft() => JsonConvert.SerializeObject(_dictionaryStr);
 
 		[Benchmark]
-		public string SerializeDictionary_Jil() => JSON.Serialize(_dictionary);
+		public string SerializeDictionaryStr_Jil() => JSON.Serialize(_dictionaryStr);
 
 		[Benchmark]
-		public string SerializeDictionary_Uwu() => Json.Serialize(_dictionary);
+		public string SerializeDictionaryStr_Uwu() => Json.Serialize(_dictionaryStr);
 
 		[Benchmark]
-		public string SerializeDictionaryOne_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_dictionaryOne);
+		public string SerializeDictionaryStrOne_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_dictionaryStrOne);
 
 		[Benchmark]
-		public string SerializeDictionaryOne_Newtonsoft() => JsonConvert.SerializeObject(_dictionaryOne);
+		public string SerializeDictionaryStrOne_Newtonsoft() => JsonConvert.SerializeObject(_dictionaryStrOne);
 
 		[Benchmark]
-		public string SerializeDictionaryOne_Jil() => JSON.Serialize(_dictionaryOne);
+		public string SerializeDictionaryStrOne_Jil() => JSON.Serialize(_dictionaryStrOne);
 
 		[Benchmark]
-		public string SerializeDictionaryOne_Uwu() => Json.Serialize(_dictionaryOne);
+		public string SerializeDictionaryStrOne_Uwu() => Json.Serialize(_dictionaryStrOne);
 
 		[Benchmark]
-		public string SerializeDictionaryTwo_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_dictionaryTwo);
+		public string SerializeDictionaryStrTwo_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_dictionaryStrTwo);
 
 		[Benchmark]
-		public string SerializeDictionaryTwo_Newtonsoft() => JsonConvert.SerializeObject(_dictionaryTwo);
+		public string SerializeDictionaryStrTwo_Newtonsoft() => JsonConvert.SerializeObject(_dictionaryStrTwo);
 
 		[Benchmark]
-		public string SerializeDictionaryTwo_Jil() => JSON.Serialize(_dictionaryTwo);
+		public string SerializeDictionaryStrTwo_Jil() => JSON.Serialize(_dictionaryStrTwo);
 
 		[Benchmark]
-		public string SerializeDictionaryTwo_Uwu() => Json.Serialize(_dictionaryTwo);
+		public string SerializeDictionaryStrTwo_Uwu() => Json.Serialize(_dictionaryStrTwo);
+
+		#endregion
+
+		#region IDictionary<string, object> stuff
+
+		#region Fields
+
+		private static readonly IDictionary<string, object> _dictionaryObj = new Dictionary<string, object>()
+		{
+			{ "string", "string" },
+			{ "bool", false },
+			{ "byte", byte.MaxValue },
+			{ "sbyte", sbyte.MaxValue },
+			{ "char", '\\' },
+			{ "decimal", decimal.MaxValue },
+			{ "double", double.MaxValue },
+			{ "float", float.MaxValue },
+			{ "int", int.MaxValue },
+			{ "uint", uint.MaxValue },
+			{ "long", long.MaxValue },
+			{ "ulong", ulong.MaxValue },
+			{ "short", short.MaxValue },
+			{ "ushort", ushort.MaxValue },
+			{ "DateTime", DateTime.UtcNow },
+			{ "TimeSpan", TimeSpan.MaxValue },
+			{ "Null", null }
+		};
+
+		private static readonly IDictionary<string, object> _dictionaryObjOne = new Dictionary<string, object>()
+		{
+			{ "string[]", new[] { "dummy", null, "\\\\" } },
+			{ "bool[]", new[] { true, false, true } },
+			{ "byte[]", new[] { byte.MinValue, byte.MaxValue } },
+			{ "sbyte[]", new[] { sbyte.MinValue, sbyte.MaxValue } },
+			{ "char[]", new[] { '\b' , '\\', 'x' } },
+			{ "decimal[]", new[] { 0.000000000123M, 1.12316454M } },
+			{ "double[]", new[] { 0.00000001D, 1.12345D } },
+			{ "float[]", new[] { 0.00002F, 1.123F } },
+			{ "int[]", new[] { int.MinValue, int.MaxValue } },
+			{ "uint[]", new[] { uint.MinValue, uint.MaxValue } },
+			{ "long[]", new[] { long.MinValue, long.MaxValue } },
+			{ "ulong[]", new[] { ulong.MinValue, ulong.MaxValue } },
+			{ "short[]", new[] { short.MinValue, short.MaxValue } },
+			{ "ushort[]", new[] { ushort.MinValue, ushort.MaxValue } },
+			{ "DateTime[]", new[] { DateTime.MinValue.ToUniversalTime(), DateTime.MaxValue.ToUniversalTime() } },
+			{ "TimeSpan[]", new[] { new TimeSpan(26, 52, 104), new TimeSpan(1) } },
+			{ "object[]", new object[] { null, 45, "x", 0.01F } }
+		};
+
+		#endregion
+
+		[Benchmark]
+		public string SerializeDictionaryObj_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_dictionaryObj);
+
+		[Benchmark]
+		public string SerializeDictionaryObj_Newtonsoft() => JsonConvert.SerializeObject(_dictionaryObj);
+
+		[Benchmark]
+		public string SerializeDictionaryObj_Uwu() => Json.Serialize(_dictionaryObj);
+
+		[Benchmark]
+		public string SerializeDictionaryObjOne_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_dictionaryObjOne);
+
+		[Benchmark]
+		public string SerializeDictionaryObjOne_Newtonsoft() => JsonConvert.SerializeObject(_dictionaryObjOne);
+
+		[Benchmark]
+		public string SerializeDictionaryObjOne_Uwu() => Json.Serialize(_dictionaryObjOne);
+
+		#endregion
+
+#elif true
+
+		// ...
+
+#endif
+#pragma warning restore CA1822
 	}
 }
