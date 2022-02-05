@@ -21,7 +21,8 @@ namespace uwu.Tests
 			{ nameof(Utf8Json), x => Utf8Json.JsonSerializer.ToJsonString(x) },
 			{ nameof(Newtonsoft), x => JsonConvert.SerializeObject(x) },
 			{ nameof(Jil), x => JSON.Serialize(x) },
-			{ nameof(uwu), x => Json.Serialize(x) }
+			{ nameof(uwu), x => Json.Serialize(x) },
+			{ "owo", x => Json.SerializeUnsafe(x) }
 		};
 
 		// NOTE: In order to check that, by default.. I'm doing the same as other serializers.
@@ -49,7 +50,7 @@ namespace uwu.Tests
 		};
 
 		private static readonly object[] _strObjItems = new[]
-{
+		{
 			new object[]
 			{
 				"{\"string\":\"string\",\"bool\":false,\"byte\":255,\"sbyte\":127,\"char\":\"\\\\\",\"decimal\":1234.5,\"double\":1.7976931348623157E+308,\"float\":3.4028235E+38,\"int\":2147483647,\"uint\":4294967295,\"long\":9223372036854775807,\"ulong\":18446744073709551615,\"short\":32767,\"ushort\":65535,\"DateTime\":\"9999-12-31T22:59:59.9999999Z\",\"TimeSpan\":\"1.02:53:44\"}",
@@ -109,19 +110,7 @@ namespace uwu.Tests
 					{ "object[][]", new object[] { 1, new[] { "x", "y" }, new object[] { 1.1F, new[] { '\\' } } } }
 				},
 				new[] { nameof(Utf8Json), nameof(Jil) }
-			},
-#if DISABLED
-			new object[]
-			{
-				"",
-				new Dictionary<string, object>()
-				{
-					{ "One", new Dictionary<string, string>() { { "X", "Y" } } },
-					{ "Two", _strStr }
-				},
-				new[] { nameof(Jil) }
 			}
-#endif
 		};
 
 		#endregion
@@ -192,6 +181,22 @@ namespace uwu.Tests
 					Assert.That(serialize(_strObj), Is.EqualTo("{}"), name);
 				}
 			});
+		}
+
+		[Test]
+		public void Serialize_Without_Null_Or_Empty_Works_As_Expected()
+		{
+			var dictionary = new Dictionary<string, string>()
+			{
+				{ "One", null },
+				{ "Two", "ZZ" },
+				{ "Three", "" },
+				{ "Four", " " } //< Not excluded.
+			};
+
+			var json = Json.SerializeWithoutNullOrEmpty(dictionary);
+			var expected = "{\"Two\":\"ZZ\",\"Four\":\" \"}";
+			Assert.That(json, Is.EqualTo(expected));
 		}
 
 		[Test]

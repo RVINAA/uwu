@@ -11,20 +11,21 @@ namespace uwu.Benchmarks.Stuff
 	public class DictionaryBenchmark
 	{
 #pragma warning disable CA1822
+
 #if true
 
 		#region IDictionary<string, string> stuff
 
 		#region Fields
 
-		private static readonly IDictionary<string, string> _dictionaryStr = new Dictionary<string, string>()
+		private static readonly IDictionary<string, string> _small = new Dictionary<string, string>()
 		{
 			{ "Dummy Key", "Dummy Value" },
 			{ "Key", "Value" },
 			{ "K", "V" }
 		};
 
-		private static readonly IDictionary<string, string> _dictionaryStrOne = new Dictionary<string, string>()
+		private static readonly IDictionary<string, string> _medium = new Dictionary<string, string>()
 		{
 			{ "01", "Hiya, Barbie\n" },
 			{ "02", "Hi, Ken\n" },
@@ -50,7 +51,7 @@ namespace uwu.Benchmarks.Stuff
 			{ "23", "Kiss me here, touch me there, hanky panky\n" }
 		};
 
-		private static readonly IDictionary<string, string> _dictionaryStrTwo = new Dictionary<string, string>()
+		private static readonly IDictionary<string, string> _large = new Dictionary<string, string>()
 		{
 			{ "01", "Hiya, Barbie\n" },
 			{ "02", "H\fi, Ken\n" },
@@ -100,43 +101,67 @@ namespace uwu.Benchmarks.Stuff
 
 		#endregion
 
-		[Benchmark]
-		public string SerializeDictionaryStr_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_dictionaryStr);
+		[GlobalSetup]
+		public void GlobalSetup()
+		{
+			Serialize_Small_Dict_Newtonsoft();
+			Serialize_Medium_Dict_Newtonsoft();
+			Serialize_Large_Dict_Newtonsoft();
+
+			Serialize_Small_Dict_Jil();
+			Serialize_Medium_Dict_Jil();
+			Serialize_Large_Dict_Jil();
+
+			Serialize_Small_Dict_Utf8Json();
+			Serialize_Medium_Dict_Utf8Json();
+			Serialize_Large_Dict_Utf8Json();
+		}
 
 		[Benchmark]
-		public string SerializeDictionaryStr_Newtonsoft() => JsonConvert.SerializeObject(_dictionaryStr);
+		public string Serialize_Small_Dict_Newtonsoft() => JsonConvert.SerializeObject(_small);
+		[Benchmark]
+		public string Serialize_Medium_Dict_Newtonsoft() => JsonConvert.SerializeObject(_medium);
+		[Benchmark]
+		public string Serialize_Large_Dict_Newtonsoft() => JsonConvert.SerializeObject(_large);
 
 		[Benchmark]
-		public string SerializeDictionaryStr_Jil() => JSON.Serialize(_dictionaryStr);
+		public string Serialize_Small_Dict_Jil() => JSON.Serialize(_small);
+		[Benchmark]
+		public string Serialize_Medium_Dict_Jil() => JSON.Serialize(_medium);
+		[Benchmark]
+		public string Serialize_Large_Dict_Jil() => JSON.Serialize(_large);
 
 		[Benchmark]
-		public string SerializeDictionaryStr_Uwu() => Json.Serialize(_dictionaryStr);
+		public string Serialize_Small_Dict_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_small);
+		[Benchmark]
+		public string Serialize_Medium_Dict_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_medium);
+		[Benchmark]
+		public string Serialize_Large_Dict_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_large);
 
 		[Benchmark]
-		public string SerializeDictionaryStrOne_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_dictionaryStrOne);
+		public string Serialize_Small_Dict_Uwu() => Json.Serialize(_small);
+		[Benchmark]
+		public string Serialize_Medium_Dict_Uwu() => Json.Serialize(_medium);
+		[Benchmark]
+		public string Serialize_Large_Dict_Uwu() => Json.Serialize(_large);
 
 		[Benchmark]
-		public string SerializeDictionaryStrOne_Newtonsoft() => JsonConvert.SerializeObject(_dictionaryStrOne);
+		public string SerializeUnsafe_Small_Dict_Uwu() => Json.SerializeUnsafe(_small);
+		[Benchmark]
+		public string SerializeUnsafe_Medium_Dict_Uwu() => Json.SerializeUnsafe(_medium);
+		[Benchmark]
+		public string SerializeUnsafe_Large_Dict_Uwu() => Json.SerializeUnsafe(_large);
 
 		[Benchmark]
-		public string SerializeDictionaryStrOne_Jil() => JSON.Serialize(_dictionaryStrOne);
-
+		public string SerializeWithoutNullOrEmpty_Small_Dict_Uwu() => Json.SerializeWithoutNullOrEmpty(_small);
 		[Benchmark]
-		public string SerializeDictionaryStrOne_Uwu() => Json.Serialize(_dictionaryStrOne);
-
+		public string SerializeWithoutNullOrEmpty_Medium_Dict_Uwu() => Json.SerializeWithoutNullOrEmpty(_medium);
 		[Benchmark]
-		public string SerializeDictionaryStrTwo_Utf8Json() => Utf8Json.JsonSerializer.ToJsonString(_dictionaryStrTwo);
-
-		[Benchmark]
-		public string SerializeDictionaryStrTwo_Newtonsoft() => JsonConvert.SerializeObject(_dictionaryStrTwo);
-
-		[Benchmark]
-		public string SerializeDictionaryStrTwo_Jil() => JSON.Serialize(_dictionaryStrTwo);
-
-		[Benchmark]
-		public string SerializeDictionaryStrTwo_Uwu() => Json.Serialize(_dictionaryStrTwo);
+		public string SerializeWithoutNullOrEmpty_Large_Dict_Uwu() => Json.SerializeWithoutNullOrEmpty(_large);
 
 		#endregion
+
+#elif true
 
 		#region IDictionary<string, object> stuff
 
@@ -211,6 +236,7 @@ namespace uwu.Benchmarks.Stuff
 		// ...
 
 #endif
+
 #pragma warning restore CA1822
 	}
 }

@@ -33,5 +33,32 @@ namespace System.Text
 				num++;
 			}
 		}
+
+		public unsafe static void AppendEscapedUnsafe(this StringBuilder sb, char* pointer)
+		{
+			for (char* c = pointer; *c != '\0'; c++)
+			{
+				switch (*c)
+				{
+					default:
+						if (*c == '"' || *c == '\\')
+						{
+							sb.Append('\\');
+							sb.Append(*c);
+							goto IL_00a3;
+						}
+						break;
+					case '\b': sb.Append("\\b"); goto IL_00a3;
+					case '\t': sb.Append("\\t"); goto IL_00a3;
+					case '\n': sb.Append("\\n"); goto IL_00a3;
+					case '\f': sb.Append("\\f"); goto IL_00a3;
+					case '\r': sb.Append("\\r"); goto IL_00a3;
+					case '\v': break;
+				}
+				sb.Append(*c);
+			IL_00a3:
+				c++;
+			}
+		}
 	}
 }
