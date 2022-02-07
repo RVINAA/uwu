@@ -120,6 +120,14 @@ namespace uwu
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static void Write(StringBuilder sb, Guid value)
+		{
+			sb.Append("\":\"");
+			sb.Append(value.ToString("D"));
+			sb.Append('"');
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void Write(StringBuilder sb, DateTime value)
 		{
 			sb.Append("\":\""); // ISO 8601
@@ -133,6 +141,31 @@ namespace uwu
 			sb.Append("\":\"");
 			sb.Append(value.ToString());
 			sb.Append('"');
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static void Write(StringBuilder sb, IDictionary value)
+		{
+			// TODO: Optimize.. I don't like this.
+			var enumerator = value.GetEnumerator();
+			if (!enumerator.MoveNext())
+			{
+				sb.Append("\"{}");
+				return;
+			}
+
+			sb.Append("\":{\"");
+			sb.AppendEscaped(enumerator.Key.UnboxAsStringOrThrow());
+			Write(sb, enumerator.Value);
+
+			while (enumerator.MoveNext())
+			{
+				sb.Append(",\"");
+				sb.AppendEscaped(enumerator.Key.UnboxAsStringOrThrow());
+				Write(sb, enumerator.Value);
+			}
+
+			sb.Append('}');
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -204,15 +237,15 @@ namespace uwu
 				Write(sb, @sbyte);
 			else if (obj is byte @byte)
 				Write(sb, @byte);
+			else if (obj is Guid guid)
+				Write(sb, guid);
 			else if (obj is DateTime dateTime)
 				Write(sb, dateTime);
 			else if (obj is TimeSpan timeSpan)
 				Write(sb, timeSpan);
-			// TODO: IDictionary<string, string>
-			// TODO: IDictionary<string, object>
-			// TODO?: KeyValuePair<string, string>
-			// TODO?: KeyValuePair<string, object>
-			else if (obj is IEnumerable enumerable)
+			else if (obj is IDictionary dictionary) //< TODO?: Handle recursion / deep?
+				Write(sb, dictionary);
+			else if (obj is IEnumerable enumerable) //< TODO?: Handle recursion / deep?
 				Write(sb, enumerable);
 			else if (obj == null)
 				sb.Append("\":null");

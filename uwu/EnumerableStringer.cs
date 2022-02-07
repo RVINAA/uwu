@@ -124,6 +124,14 @@ namespace uwu
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static void Write(StringBuilder sb, Guid value)
+		{
+			sb.Append('"');
+			sb.Append(value.ToString("D"));
+			sb.Append('"');
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void Write(StringBuilder sb, DateTime value)
 		{
 			sb.Append('"'); // ISO 8601
@@ -139,25 +147,30 @@ namespace uwu
 			sb.Append('"');
 		}
 
-#if DISABLED
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private static void Write(StringBuilder sb, KeyValuePair<string, string> value)
+		private static void Write(StringBuilder sb, IDictionary value)
 		{
-			sb.Append("{\"");
-			sb.AppendEscaped(value.Key);
+			// TODO: Optimize.. I don't like this.
+			var enumerator = value.GetEnumerator();
+			if (!enumerator.MoveNext())
+			{
+				sb.Append("{}");
+				return;
+			}
 
-			if (value.Value == null)
+			sb.Append("{\"");
+			sb.AppendEscaped(enumerator.Key.UnboxAsStringOrThrow());
+			Write(sb, enumerator.Value);
+
+			while (enumerator.MoveNext())
 			{
-				sb.Append("\":null}");
+				sb.Append(",\"");
+				sb.AppendEscaped(enumerator.Key.UnboxAsStringOrThrow());
+				Write(sb, enumerator.Value);
 			}
-			else
-			{
-				sb.Append("\":\"");
-				sb.AppendEscaped(value.Value);
-				sb.Append("\"}");
-			}
+
+			sb.Append('}');
 		}
-#endif
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void Write(StringBuilder sb, IEnumerable value)
@@ -213,15 +226,14 @@ namespace uwu
 				Write(sb, @sbyte);
 			else if (obj is byte @byte)
 				Write(sb, @byte);
+			else if (obj is Guid guid)
+				Write(sb, guid);
 			else if (obj is DateTime dateTime)
 				Write(sb, dateTime);
 			else if (obj is TimeSpan timeSpan)
 				Write(sb, timeSpan);
-#if DISABLED
-			else if (obj is KeyValuePair<string, string> pairStr)
-				Write(sb, pairStr);
-#endif
-			// TODO: KeyValuePair<string, object>
+			else if (obj is IDictionary dictionary) //< TODO?: Handle recursion / deep?
+				Write(sb, dictionary);
 			else if (obj is IEnumerable enumerable) //< TODO?: Handle recursion / deep?
 				Write(sb, enumerable);
 			else if (obj == null)

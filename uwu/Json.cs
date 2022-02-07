@@ -8,8 +8,9 @@ namespace uwu
 	{
 		#region Fields
 
+		private const string EMPTY_DICT = "{}";
+		private const string EMPTY_ENUM = "[]";
 		private const string NULL = "null";
-		private const string EMPTY = "{}";
 
 		#endregion
 
@@ -34,7 +35,7 @@ namespace uwu
 				}
 			}
 
-			return EMPTY;
+			return EMPTY_DICT;
 
 		Loop:
 			while (enumerator.MoveNext())
@@ -129,7 +130,7 @@ namespace uwu
 
 			var enumerator = dictionary.GetEnumerator();
 			if (!enumerator.MoveNext())
-				return EMPTY;
+				return EMPTY_DICT;
 
 			var sb = StringBuilderCache.Acquire(512);
 			sb.Append("{\"");
@@ -189,6 +190,30 @@ namespace uwu
 		{
 			var sb = StringBuilderCache.Acquire(512);
 			Serialize(dictionary, sb);
+
+			return StringBuilderCache.GetStringAndRelease(sb);
+		}
+
+		public static string Serialize(IEnumerable<object> enumerable)
+		{
+			if (enumerable == null)
+				return NULL;
+
+			var enumerator = enumerable.GetEnumerator();
+			if (!enumerator.MoveNext())
+				return EMPTY_ENUM;
+
+			var sb = StringBuilderCache.Acquire(512);
+			sb.Append('[');
+			EnumerableStringer.Write(sb, enumerator.Current);
+
+			while (enumerator.MoveNext())
+			{
+				sb.Append(',');
+				EnumerableStringer.Write(sb, enumerator.Current);
+			}
+
+			sb.Append(']');
 
 			return StringBuilderCache.GetStringAndRelease(sb);
 		}

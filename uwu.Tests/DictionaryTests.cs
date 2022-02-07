@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace uwu.Tests
 {
-	public class JsonTests
+	public class DictionaryTests
 	{
 		#region Fields
 
@@ -51,9 +51,9 @@ namespace uwu.Tests
 
 		private static readonly object[] _strObjItems = new[]
 		{
-			new object[]
+			new object[] //< Value & Common types supported..
 			{
-				"{\"string\":\"string\",\"bool\":false,\"byte\":255,\"sbyte\":127,\"char\":\"\\\\\",\"decimal\":1234.5,\"double\":1.7976931348623157E+308,\"float\":3.4028235E+38,\"int\":2147483647,\"uint\":4294967295,\"long\":9223372036854775807,\"ulong\":18446744073709551615,\"short\":32767,\"ushort\":65535,\"DateTime\":\"9999-12-31T22:59:59.9999999Z\",\"TimeSpan\":\"1.02:53:44\"}",
+				"{\"string\":\"string\",\"bool\":false,\"byte\":255,\"sbyte\":127,\"char\":\"\\\\\",\"decimal\":1234.5,\"double\":1.7976931348623157E+308,\"float\":3.4028235E+38,\"int\":2147483647,\"uint\":4294967295,\"long\":9223372036854775807,\"ulong\":18446744073709551615,\"short\":32767,\"ushort\":65535,\"DateTime\":\"9999-12-31T22:59:59.9999999Z\",\"TimeSpan\":\"1.02:53:44\",\"Guid\":\"e045b922-5a28-42ae-899c-4343223345c5\"}",
 				new Dictionary<string, object>()
 				{
 					{ "string", "string" },
@@ -71,13 +71,14 @@ namespace uwu.Tests
 					{ "short", short.MaxValue },
 					{ "ushort", ushort.MaxValue },
 					{ "DateTime", DateTime.MaxValue.ToUniversalTime() },
-					{ "TimeSpan", new TimeSpan(26, 52, 104) }
+					{ "TimeSpan", new TimeSpan(26, 52, 104) },
+					{ "Guid", new Guid("e045b922-5a28-42ae-899c-4343223345c5") }
 				},
 				new[] { nameof(Jil) }
 			},
-			new object[]
+			new object[] //< Some stuff against arrays.. (of supported common & value types).
 			{
-				"{\"string[]\":[\"dummy\",null,\"\\\\\\\\\"],\"bool[]\":[true,false,true],\"byte[]\":[0,255],\"sbyte[]\":[-128,127],\"char[]\":[\"\\b\",\"\\\\\",\"x\"],\"decimal[]\":[0.000000000123,1.12316454],\"double[]\":[1E-08,1.12345],\"float[]\":[2E-05,1.123],\"int[]\":[-2147483648,2147483647],\"uint[]\":[0,4294967295],\"long[]\":[-9223372036854775808,9223372036854775807],\"ulong[]\":[0,18446744073709551615],\"short[]\":[-32768,32767],\"ushort[]\":[0,65535],\"DateTime[]\":[\"0001-01-01T00:00:00.0000000Z\",\"9999-12-31T22:59:59.9999999Z\"],\"TimeSpan[]\":[\"1.02:53:44\",\"00:00:00.0000001\"],\"object[]\":[null,45,\"x\",0.01]}",
+				"{\"string[]\":[\"dummy\",null,\"\\\\\\\\\"],\"bool[]\":[true,false,true],\"byte[]\":[0,255],\"sbyte[]\":[-128,127],\"char[]\":[\"\\b\",\"\\\\\",\"x\"],\"decimal[]\":[0.000000000123,1.12316454],\"double[]\":[1E-08,1.12345],\"float[]\":[2E-05,1.123],\"int[]\":[-2147483648,2147483647],\"uint[]\":[0,4294967295],\"long[]\":[-9223372036854775808,9223372036854775807],\"ulong[]\":[0,18446744073709551615],\"short[]\":[-32768,32767],\"ushort[]\":[0,65535],\"DateTime[]\":[\"0001-01-01T00:00:00.0000000Z\",\"9999-12-31T22:59:59.9999999Z\"],\"TimeSpan[]\":[\"1.02:53:44\",\"00:00:00.0000001\"],\"Guid[]\":[\"e045b922-5a28-42ae-899c-4343223345c5\"],\"object[]\":[null,45,\"x\",0.01]}",
 				new Dictionary<string, object>()
 				{
 					{ "string[]", new[] { "dummy", null, "\\\\" } },
@@ -96,11 +97,12 @@ namespace uwu.Tests
 					{ "ushort[]", new[] { ushort.MinValue, ushort.MaxValue } },
 					{ "DateTime[]", new[] { DateTime.MinValue.ToUniversalTime(), DateTime.MaxValue.ToUniversalTime() } },
 					{ "TimeSpan[]", new[] { new TimeSpan(26, 52, 104), new TimeSpan(1) } },
+					{ "Guid[]", new[] { new Guid("e045b922-5a28-42ae-899c-4343223345c5") } },
 					{ "object[]", new object[] { null, 45, "x", 0.01F } }
 				},
 				new[] { nameof(Utf8Json), nameof(Newtonsoft), nameof(Jil) }
 			},
-			new object[]
+			new object[] //< Multidimensional arrays not supported; but array of arrays yesss.
 			{
 				"{\"string[][]\":[[\"\\\"\",null],[null,\"dummy\"]],\"int[][][]\":[[[1,2],[3,4]]],\"object[][]\":[1,[\"x\",\"y\"],[1.1,[\"\\\\\"]]]}",
 				new Dictionary<string, object>()
@@ -110,6 +112,17 @@ namespace uwu.Tests
 					{ "object[][]", new object[] { 1, new[] { "x", "y" }, new object[] { 1.1F, new[] { '\\' } } } }
 				},
 				new[] { nameof(Utf8Json), nameof(Jil) }
+			},
+			new object[] //< Support inner dictionaries.. where TKey must be a string (ECMA-404).
+			{
+				"{\"X\":{\"A\":\"B\",\"C\":\"D\"},\"Y\":{\"E\":123,\"F\":45},\"Z\":{\"A\":[1,{}]}}",
+				new Dictionary<string, object>()
+				{
+					{ "X", new Dictionary<object, string>() { { "A", "B" }, { "C", "D" } } },
+					{ "Y", new Dictionary<string, object>() { { "E", 123 }, { "F", 45F } } },
+					{ "Z", new Dictionary<string, object>() { { "A", new object[] { 1, _strObj } } } }
+				},
+				new[] { nameof(Newtonsoft), nameof(Jil) }
 			}
 		};
 
