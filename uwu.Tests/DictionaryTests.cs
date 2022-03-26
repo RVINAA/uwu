@@ -46,17 +46,18 @@ namespace uwu.Tests
 			},
 			new object[] { "{\"A\":\"B\",\"C\":null,\"D\":\"E\"}", new Dictionary<string, string>() { { "A", "B" }, { "C", null }, { "D", "E" } } },
 			new object[] { "{\"A\":null,\"B\":\"C\",\"D\":null}", new Dictionary<string, string>() { { "A", null }, { "B", "C" }, { "D", null } } },
-			new object[] { "{\"A\":null,\"B\":null,\"C\":null}", new Dictionary<string, string>() { { "A", null }, { "B", null }, { "C", null } } }
+			new object[] { "{\"A\":null,\"B\":null,\"C\":null}", new Dictionary<string, string>() { { "A", null }, { "B", null }, { "C", null } } },
+			new object[] { "{\"\\\\z\\\"\\b\\\"zzz\":\"z\\t\\n\"}", new Dictionary<string, string>() { { "\\z\"\b\"zzz", "z\t\n" } } }
 		};
 
 		private static readonly object[] _strObjItems = new[]
 		{
 			new object[] //< Value & Common types supported..
 			{
-				"{\"string\":\"string\",\"bool\":false,\"byte\":255,\"sbyte\":127,\"char\":\"\\\\\",\"decimal\":1234.5,\"double\":1.7976931348623157E+308,\"float\":3.4028235E+38,\"int\":2147483647,\"uint\":4294967295,\"long\":9223372036854775807,\"ulong\":18446744073709551615,\"short\":32767,\"ushort\":65535,\"DateTime\":\"9999-12-31T22:59:59.9999999Z\",\"TimeSpan\":\"1.02:53:44\",\"Guid\":\"e045b922-5a28-42ae-899c-4343223345c5\"}",
+				"{\"string\":\"\\\\\\b\",\"bool\":false,\"byte\":255,\"sbyte\":127,\"char\":\"\\\\\",\"decimal\":1234.5,\"double\":1.7976931348623157E+308,\"float\":3.4028235E+38,\"int\":2147483647,\"uint\":4294967295,\"long\":9223372036854775807,\"ulong\":18446744073709551615,\"short\":32767,\"ushort\":65535,\"DateTime\":\"9999-12-31T22:59:59.9999999Z\",\"TimeSpan\":\"1.02:53:44\",\"Guid\":\"e045b922-5a28-42ae-899c-4343223345c5\"}",
 				new Dictionary<string, object>()
 				{
-					{ "string", "string" },
+					{ "string", "\\\b" },
 					{ "bool", false },
 					{ "byte", byte.MaxValue },
 					{ "sbyte", sbyte.MaxValue },
@@ -118,7 +119,7 @@ namespace uwu.Tests
 				"{\"X\":{\"A\":\"B\",\"C\":\"D\"},\"Y\":{\"E\":123,\"F\":45},\"Z\":{\"A\":[1,{}]}}",
 				new Dictionary<string, object>()
 				{
-					{ "X", new Dictionary<object, string>() { { "A", "B" }, { "C", "D" } } },
+					{ "X", new Dictionary<string, string>() { { "A", "B" }, { "C", "D" } } },
 					{ "Y", new Dictionary<string, object>() { { "E", 123 }, { "F", 45F } } },
 					{ "Z", new Dictionary<string, object>() { { "A", new object[] { 1, _strObj } } } }
 				},

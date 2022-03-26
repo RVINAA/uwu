@@ -1,7 +1,9 @@
-﻿using System;
+﻿#define NEW_IMPL
+using System;
 using System.Text;
 using System.Collections;
 using System.Globalization;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace uwu
@@ -143,6 +145,59 @@ namespace uwu
 			sb.Append('"');
 		}
 
+#if NEW_IMPL
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static void Write(StringBuilder sb, Dictionary<string, string> value)
+		{
+			var enumerator = value.GetEnumerator();
+			if (!enumerator.MoveNext())
+			{
+				sb.Append("\"{}");
+				return;
+			}
+
+			var current = enumerator.Current;
+			sb.Append("\":{\"");
+			sb.AppendEscaped(current.Key);
+			Write(sb, current.Value);
+
+			while (enumerator.MoveNext())
+			{
+				current = enumerator.Current;
+				sb.Append(",\"");
+				sb.AppendEscaped(current.Key);
+				Write(sb, current.Value);
+			}
+
+			sb.Append('}');
+		}
+
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
+		private static void Write(StringBuilder sb, Dictionary<string, object> value)
+		{
+			var enumerator = value.GetEnumerator();
+			if (!enumerator.MoveNext())
+			{
+				sb.Append("\"{}");
+				return;
+			}
+
+			var current = enumerator.Current;
+			sb.Append("\":{\"");
+			sb.AppendEscaped(current.Key);
+			Write(sb, current.Value);
+
+			while (enumerator.MoveNext())
+			{
+				current = enumerator.Current;
+				sb.Append(",\"");
+				sb.AppendEscaped(current.Key);
+				Write(sb, current.Value);
+			}
+
+			sb.Append('}');
+		}
+#else
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void Write(StringBuilder sb, IDictionary value)
 		{
@@ -167,10 +222,12 @@ namespace uwu
 
 			sb.Append('}');
 		}
+#endif
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		private static void Write(StringBuilder sb, IEnumerable value)
 		{
+			// TODO: Optimizate..
 			var enumerator = value.GetEnumerator();
 			if (!enumerator.MoveNext())
 			{
@@ -243,8 +300,16 @@ namespace uwu
 				Write(sb, dateTime);
 			else if (obj is TimeSpan timeSpan)
 				Write(sb, timeSpan);
+#if NEW_IMPL
+			// XXX: Avoid extra allocations (not) using interface IDictionary..
+			else if (obj is Dictionary<string, string> dictStrStr) //< TODO?: Handle recursion / deep?
+				Write(sb, dictStrStr);
+			else if (obj is Dictionary<string, object> dictStrObj) //< TODO?: Handle recursion / deep?
+				Write(sb, dictStrObj);
+#else
 			else if (obj is IDictionary dictionary) //< TODO?: Handle recursion / deep?
 				Write(sb, dictionary);
+#endif
 			else if (obj is IEnumerable enumerable) //< TODO?: Handle recursion / deep?
 				Write(sb, enumerable);
 			else if (obj == null)

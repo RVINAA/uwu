@@ -24,23 +24,23 @@ I'm benching with their main/defaults methods (handling if they generate dynamic
 |               Serialize_Small_Dict_Utf8Json |    246.8 ns |  0.27 ns |  0.26 ns | 0.0210 |      - |     176 B |
 |  SerializeWithoutNullOrEmpty_Small_Dict_Uwu |    179.2 ns |  0.33 ns |  0.27 ns | 0.0210 |      - |     176 B |
 |                    Serialize_Small_Dict_Uwu |    165.0 ns |  0.66 ns |  0.61 ns | 0.0210 |      - |     176 B |
-|              SerializeUnsafe_Small_Dict_Uwu |    133.8 ns |  0.29 ns |  0.27 ns | 0.0181 |      - |     152 B |
+|              SerializeUnsafe_Small_Dict_Uwu |    162.5 ns |  0.23 ns |  0.19 ns | 0.0210 |      - |     176 B |
 |                                          🎔 |             |          |          |        |        |           |
 |                   Serialize_Medium_Dict_Jil |  3,578.5 ns |  2.50 ns |  2.34 ns | 0.4997 | 0.0076 |   4,200 B |
 |                Serialize_Medium_Dict_System |  3,317.4 ns |  1.44 ns |  1.34 ns | 0.2251 |      - |   1,904 B |
 |            Serialize_Medium_Dict_Newtonsoft |  3,286.9 ns |  3.67 ns |  2.87 ns | 0.5913 | 0.0076 |   4,968 B |
 | SerializeWithoutNullOrEmpty_Medium_Dict_Uwu |  2,215.5 ns |  2.17 ns |  2.03 ns | 0.1945 |      - |   1,648 B |
 |                   Serialize_Medium_Dict_Uwu |  1,971.4 ns |  1.97 ns |  1.74 ns | 0.1945 |      - |   1,648 B |
+|             SerializeUnsafe_Medium_Dict_Uwu |  1,952.8 ns |  4.88 ns |  3.81 ns | 0.1945 |      - |   1,648 B |
 |              Serialize_Medium_Dict_Utf8Json |  1,825.4 ns | 13.58 ns | 12.71 ns | 0.1965 |      - |   1,648 B |
-|             SerializeUnsafe_Medium_Dict_Uwu |  1,243.9 ns |  2.79 ns |  2.33 ns | 0.1202 |      - |   1,016 B |
 |                                          🎔 |             |          |          |        |        |           |
 |             Serialize_Large_Dict_Newtonsoft | 10,931.6 ns | 16.60 ns | 15.53 ns | 1.0529 | 0.0305 |   8,872 B |
 |                 Serialize_Large_Dict_System |  9,278.1 ns | 25.11 ns | 23.49 ns | 0.4730 |      - |   4,040 B |
 |                    Serialize_Large_Dict_Jil |  8,953.9 ns | 10.40 ns |  8.68 ns | 0.9918 | 0.0153 |   8,360 B |
 |  SerializeWithoutNullOrEmpty_Large_Dict_Uwu |  5,997.8 ns | 17.83 ns | 16.68 ns | 0.4349 |      - |   3,688 B |
 |                    Serialize_Large_Dict_Uwu |  5,466.7 ns |  3.59 ns |  3.00 ns | 0.4349 |      - |   3,688 B |
+|              SerializeUnsafe_Large_Dict_Uwu |  5,394.8 ns |  4.55 ns |  4.03 ns | 0.4349 |      - |   3,688 B |
 |               Serialize_Large_Dict_Utf8Json |  5,373.8 ns | 14.91 ns | 13.95 ns | 0.4349 |      - |   3,688 B |
-|              SerializeUnsafe_Large_Dict_Uwu |  3,288.5 ns | 12.60 ns | 11.79 ns | 0.2632 |      - |   2,216 B |
 
 #### [✘] IDictionary<string, object> to JSON.
 Will bench against a dictionary with common (supported) types; against a dictionary with arrays/inner dictionary of common types.. and union of both.<br>

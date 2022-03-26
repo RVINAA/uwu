@@ -36,8 +36,7 @@
 
 namespace System.Text
 {
-	// XXX: Intentionally public class..
-	public static class StringBuilderCache
+	internal static class StringBuilderCache
 	{
 		#region Fields
 

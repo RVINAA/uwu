@@ -34,9 +34,10 @@ namespace System.Text
 			}
 		}
 
-		public unsafe static void AppendEscapedUnsafe(this StringBuilder sb, char* pointer)
+		public unsafe static void AppendEscapedUnsafe(this StringBuilder sb, char* pointerToString)
 		{
-			for (char* c = pointer; *c != '\0'; c++)
+			char* c = pointerToString;
+			while (*c != '\0')
 			{
 				switch (*c)
 				{

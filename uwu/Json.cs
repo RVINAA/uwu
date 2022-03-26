@@ -11,6 +11,7 @@ namespace uwu
 		private const string EMPTY_DICT = "{}";
 		private const string EMPTY_ENUM = "[]";
 		private const string NULL = "null";
+		private const int CAPACITY = 1024;
 
 		#endregion
 
@@ -27,7 +28,7 @@ namespace uwu
 				var value = current.Value;
 				if (!string.IsNullOrEmpty(value))
 				{
-					sb = StringBuilderCache.Acquire(512);
+					sb = StringBuilderCache.Acquire(CAPACITY);
 					sb.Append("{\"");
 					sb.AppendEscaped(current.Key);
 					DictionaryStringer.Write(sb, value);
@@ -175,12 +176,12 @@ namespace uwu
 
 			sb.Append('}');
 
-			return StringBuilderCache.GetStringAndRelease(sb);
+			return sb.ToString();
 		}
 
 		public static string Serialize(IDictionary<string, string> dictionary)
 		{
-			var sb = StringBuilderCache.Acquire(512);
+			var sb = StringBuilderCache.Acquire(CAPACITY);
 			Serialize(dictionary, sb);
 
 			return StringBuilderCache.GetStringAndRelease(sb);
@@ -188,7 +189,7 @@ namespace uwu
 
 		public static string Serialize(IDictionary<string, object> dictionary)
 		{
-			var sb = StringBuilderCache.Acquire(512);
+			var sb = StringBuilderCache.Acquire(CAPACITY);
 			Serialize(dictionary, sb);
 
 			return StringBuilderCache.GetStringAndRelease(sb);
@@ -203,7 +204,7 @@ namespace uwu
 			if (!enumerator.MoveNext())
 				return EMPTY_ENUM;
 
-			var sb = StringBuilderCache.Acquire(512);
+			var sb = StringBuilderCache.Acquire(CAPACITY);
 			sb.Append('[');
 			EnumerableStringer.Write(sb, enumerator.Current);
 
